@@ -1,4 +1,4 @@
-package thedarkdnktv.springtrial;
+package thedarkdnktv.springtrial.core;
 
 import org.springframework.stereotype.Component;
 

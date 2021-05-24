@@ -1,4 +1,4 @@
-package thedarkdnktv.springtrial;
+package thedarkdnktv.springtrial.core;
 
 /**
  * @author TheDarkDnKTv
