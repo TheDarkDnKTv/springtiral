@@ -7,8 +7,8 @@ public class TestSpring {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		
 		
-		IMusic music = context.getBean("musicBean", IMusic.class);
-		new MusicPlayer(music).playMusic(); // Ручное внедрение зависимостей
+		MusicPlayer musicPlayer = context.getBean("musicPlayer", MusicPlayer.class);
+		musicPlayer.playMusic();
 		
 		context.close();
 	}
