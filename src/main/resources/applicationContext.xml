@@ -9,10 +9,14 @@
 	
 	<context:property-placeholder location="classpath:MusicPlayer.properties"/>
 	
-    <bean id="musicBean" class="thedarkdnktv.springtrial.ClassicalMusic"/>
-	<bean id="musicPlayer" class="thedarkdnktv.springtrial.MusicPlayer">
+    <bean id="musicBean"
+		init-method="init"
+		destroy-method="destroy"
+		factory-method="getInstance"
+		class="thedarkdnktv.springtrial.ClassicalMusic"/>
+	<!--<bean id="musicPlayer" class="thedarkdnktv.springtrial.MusicPlayer">
 		<property name="music" ref="musicBean"/>
 		<property name="name" value="${musicPlayer.name}"/>
 		<property name="volume" value="${musicPlayer.volume}"/>
-	</bean>
+	</bean>-->
 </beans>
