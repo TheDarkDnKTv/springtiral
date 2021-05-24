@@ -1,44 +1,26 @@
 package thedarkdnktv.springtrial;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
 /**
  * @author TheDarkDnKTv
  *
  */
+@Component
 public class MusicPlayer {
-	
+
 	private IMusic music;
 	
-	private String name;
-	private int volume;
-	
-	public MusicPlayer() {}
-	
+
 	// Inversion of Controll
-	public MusicPlayer(IMusic musicIn) {
+	@Autowired
+	public MusicPlayer(@Qualifier("rockMusic") IMusic musicIn) {
 		this.music = musicIn; 
 	}
 	
-	public void playMusic() {
-		System.out.println("Playing: " + music.getSong());
-	}
-	
-	public void setMusic(IMusic music) {
-		this.music = music;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getVolume() {
-		return volume;
-	}
-
-	public void setVolume(int volume) {
-		this.volume = volume;
+	public String playMusic() {
+		return "Playing: " + music.getSong();
 	}
 }
