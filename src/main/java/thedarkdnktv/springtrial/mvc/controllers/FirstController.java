@@ -3,6 +3,7 @@ package thedarkdnktv.springtrial.mvc.controllers;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,11 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class FirstController {
 	
 	@GetMapping("hello")
-	public String helloPage(HttpServletRequest request) {
-		String name = request.getParameter("name");
-		String surname = request.getParameter("surname");
-		
-		System.out.printf("Hello, %s %s!\n", name, surname);
+	public String helloPage(HttpServletRequest request, Model model) {
+		model.addAttribute("message", String.format("Hello, %s %s!", request.getParameter("name"), request.getParameter("surname")));
 		
 		return "first/hello";
 	}
@@ -31,5 +29,31 @@ public class FirstController {
 		System.out.printf("Bye, %s %s!\n", name, surname);									// In case of surname, can be used without value/name, it just takes arg name
 		
 		return "first/goodbye";
+	}
+	
+	@GetMapping("calculator")
+	public String calculator(@RequestParam int a, @RequestParam int b,
+			@RequestParam String action, Model model) {
+		double result;
+		
+		switch (action) {
+		case "multiplication":
+			result = a * b;
+			break;
+		case "addition":
+			result = a + b;
+			break;
+		case "substraction":
+			result = a - b;
+			break;
+		case "division":
+			result = a / (double) b;
+			break;
+		default:
+			result = Double.NaN;
+		}
+		
+		model.addAttribute("result", result);
+		return "first/calculator";
 	}
 }
