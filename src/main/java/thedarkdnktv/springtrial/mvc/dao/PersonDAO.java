@@ -19,10 +19,10 @@ public class PersonDAO {
 	{
 		people = new ArrayList<>();
 		
-		people.add(new Person(people.size(), "Tom"));
-		people.add(new Person(people.size(), "Bob"));
-		people.add(new Person(people.size(), "Mike"));
-		people.add(new Person(people.size(), "Katy"));
+		people.add(new Person(people.size(), "Tom", 24, "tom@mail.ru"));
+		people.add(new Person(people.size(), "Bob", 31, "bob@gmail.com"));
+		people.add(new Person(people.size(), "Mike", 22, "mike@mail.ru"));
+		people.add(new Person(people.size(), "Katy", 44, "katy@yahoo.com"));
 	}
 	
 	public List<Person> index() {
@@ -44,11 +44,11 @@ public class PersonDAO {
 	public void update(int id, Person person) {
 		Person p = people.get(id);
 		p.setName(person.getName());
+		p.setAge(person.getAge());
+		p.setEmail(person.getEmail());
 	}
 	
 	public void delete(int id) {
-		if (id >= 0 && id < people.size()) {
-			people.remove(id);
-		}
+		people.removeIf(p -> p.getId() == id);
 	}
 }
