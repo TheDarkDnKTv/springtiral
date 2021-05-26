@@ -2,6 +2,7 @@ package thedarkdnktv.springtrial.mvc.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -65,32 +66,59 @@ public class PersonDAO {
 	}
 	
 	public Person show(int id) {
-		return null;
-//		return people.stream().
-//				filter(p -> p.getId() == id)
-//				.findAny()
-//				.orElse(null);
+		Person result = null;
+		
+		try {
+			PreparedStatement state = connection.prepareStatement("SELECT * FROM Person WHERE id=?");
+			state.setInt(1, id);
+			ResultSet vals = state.executeQuery();
+			
+			vals.next(); // TODO ids
+			
+			result = new Person();
+			result.setId(vals.getInt("id"));
+			result.setName(vals.getString("name"));
+			result.setAge(vals.getInt("age"));
+			result.setEmail(vals.getString("email"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	
 	public void save(Person person) {
 		try {
-			Statement state = connection.createStatement();
-			String SQL = String.format("INSERT INTO Person VALUES(%d, '%s', %d, '%s')", 1, person.getName(), person.getAge(), person.getEmail());
-			state.executeUpdate(SQL);
-			
+			PreparedStatement state =  connection.prepareStatement("INSERT INTO Person VALUES(1, ?, ?, ?)");
+			state.setString(1, person.getName());
+			state.setInt(2, person.getAge());
+			state.setString(3, person.getEmail());
+			state.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void update(int id, Person person) {
-//		Person p = people.get(id);
-//		p.setName(person.getName());
-//		p.setAge(person.getAge());
-//		p.setEmail(person.getEmail());
+		try {
+			PreparedStatement state = connection.prepareStatement("UPDATE Person SET name=?, age=?, email=? WHERE id=?");
+			state.setString(1, person.getName());
+			state.setInt(2, person.getAge());
+			state.setString(3, person.getEmail());
+			state.setInt(4, id);
+			state.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void delete(int id) {
-//		people.removeIf(p -> p.getId() == id);
+		try {
+			PreparedStatement state = connection.prepareStatement("DELETE FROM Person WHERE id=?");
+			state.setInt(1, id);
+			state.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
