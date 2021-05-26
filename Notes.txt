@@ -41,3 +41,20 @@ Spring MVC
 	где отсутствующие поля будут заполнены по умолчанию, и затем помещает под нужным ключём в модель. 
 	7. Форма HTML не позволяют указать тип запроса PATCH/DELETE, так что требуется указать скрытый input с именем _method и в графе value = тип
 	
+	Базовые SQL запросы:
+		DDL (Data definition language)
+		- CREATE DATABASE name;
+		- DROP DATABASE name;
+		- CREATE TABLE name (
+			id int,
+			name varchar
+		);
+		- DROP TABLE name;
+		
+		DML (Data manipulatio language)
+		- SELECT id, name FROM table_name;
+		- SELECT * FROM table_name;
+		- INSERT INTO Person(id, name) VALUES (1, 'Tom');
+		- UPDATE Person SET name='Tom1' WHERE id=1;
+		- DELETE FROM Person WHERE id=1;
+	
