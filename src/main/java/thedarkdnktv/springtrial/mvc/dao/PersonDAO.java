@@ -40,4 +40,15 @@ public class PersonDAO {
 		person.setId(people.size());
 		people.add(person);
 	}
+	
+	public void update(int id, Person person) {
+		Person p = people.get(id);
+		p.setName(person.getName());
+	}
+	
+	public void delete(int id) {
+		if (id >= 0 && id < people.size()) {
+			people.remove(id);
+		}
+	}
 }

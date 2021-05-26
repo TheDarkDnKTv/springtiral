@@ -1,5 +1,9 @@
 package thedarkdnktv.springtrial.mvc.config;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
@@ -26,5 +30,11 @@ public class ServletInitializer extends AbstractAnnotationConfigDispatcherServle
 			"/" // Send all requests to servlet
 		};
 	}
-
+	
+	@Override
+	public void onStartup(ServletContext context) throws ServletException {
+		super.onStartup(context);
+		context.addFilter("hiddenHttpMethodFilter", new HiddenHttpMethodFilter())
+			.addMappingForUrlPatterns(null, true, "/*"); // Adds hidden http request in forms
+	}
 }
