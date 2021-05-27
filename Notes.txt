@@ -59,4 +59,5 @@ Spring MVC
 		- DELETE FROM Person WHERE id=1;
 		
 	8. PreparedStatement быстрее обычного, код компилируется и сохраняется. Некоторые БД ещё и его кешируют
+	9. JdbcTemplate по умолчанию использует PreparedStatement
 	
