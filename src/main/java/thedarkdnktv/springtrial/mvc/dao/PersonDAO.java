@@ -2,9 +2,15 @@ package thedarkdnktv.springtrial.mvc.dao;
 
 import java.util.List;
 
+import javax.annotation.PreDestroy;
+import javax.persistence.criteria.CriteriaQuery;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Component;
 
 import thedarkdnktv.springtrial.mvc.models.Person;
@@ -16,33 +22,59 @@ import thedarkdnktv.springtrial.mvc.models.Person;
 @Component
 public class PersonDAO {
 
-	private final JdbcTemplate template;
+	private final SessionFactory factory;
 	
 	@Autowired
-	public PersonDAO(JdbcTemplate template) {
-		this.template = template;
+	public PersonDAO(LocalSessionFactoryBean factory) {
+		this.factory = factory.getObject();
 	}
 	
 	public List<Person> index() {
-		return template.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
+		try (Session session = factory.openSession()) {
+			CriteriaQuery<Person> query = session.getCriteriaBuilder().createQuery(Person.class);
+			query.from(Person.class);
+			Query<Person> qq = session.createQuery(query);
+			return qq.getResultList();
+		}
 	}
 	
 	public Person show(int id) {
-		return template.query("SELECT * FROM Person WHERE id=?", new BeanPropertyRowMapper<>(Person.class), new Object[] {id})
-				.stream()
-				.findAny()
-				.orElse(null);
+		try (Session session = factory.openSession()) {
+			session.beginTransaction();
+			Person ret = session.get(Person.class, id); // Getting object by id
+			session.getTransaction().commit();
+			return ret;
+		}
 	}
 	
 	public void save(Person person) {
-		template.update("INSERT INTO Person (name, age, email) VALUES(?, ?, ?)", person.getName(), person.getAge(), person.getEmail());
+		try (Session session = factory.openSession()) {
+			session.beginTransaction();
+			session.save(person);
+			session.getTransaction().commit();
+		}
 	}
 	
 	public void update(int id, Person person) {
-		template.update("UPDATE Person SET name=?, age=?, email=? WHERE id=?", person.getName(), person.getAge(), person.getEmail(), id);
+		try (Session session = factory.openSession()) {
+			session.beginTransaction();
+			person.setId(id);
+			session.merge(person);
+			session.getTransaction().commit();
+		}
 	}
 	
 	public void delete(int id) {
-		template.update("DELETE FROM Person WHERE id=?", id);
+		try (Session session = factory.openSession()) {
+			session.beginTransaction();
+			Person person = session.get(Person.class, id);
+			session.delete(person);
+			session.getTransaction().commit();
+		}		
+	}
+	
+	@PreDestroy
+	public void deconstruct() {
+		factory.close();
 	}
 }

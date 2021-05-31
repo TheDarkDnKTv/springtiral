@@ -1,5 +1,9 @@
 package thedarkdnktv.springtrial.mvc.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,25 +11,31 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 @Configuration
-@ComponentScan("thedarkdnktv.springtrial.mvc")
 @EnableWebMvc
+@ComponentScan("thedarkdnktv.springtrial.mvc")
+@PropertySource("classpath:db.properties")
 public class SpringConfig implements WebMvcConfigurer {
 	
 	private final ApplicationContext appContext;
+	private final Environment env;
 	
 	@Autowired
-	public SpringConfig(ApplicationContext context) {
+	public SpringConfig(ApplicationContext context, Environment env) {
 		this.appContext = context;
+		this.env = env;
 	}
 	
 	@Bean
@@ -55,15 +65,31 @@ public class SpringConfig implements WebMvcConfigurer {
 	@Bean
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.postgresql.Driver"); // TODO move to properties
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/first_db");
-		dataSource.setUsername("postgres");
-		dataSource.setPassword("testpass");
+		dataSource.setDriverClassName(env.getProperty("db.driver"));
+		dataSource.setUrl(env.getProperty("db.url"));
+		dataSource.setUsername(env.getProperty("db.username"));
+		dataSource.setPassword(env.getProperty("db.password"));
 		return dataSource;
 	}
 	
 	@Bean
-	public JdbcTemplate jdbcTemplate() {
-		return new JdbcTemplate(dataSource());
+	public LocalSessionFactoryBean sessionFactory() {
+		LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
+		sessionFactoryBean.setDataSource(dataSource());
+		sessionFactoryBean.setPackagesToScan("thedarkdnktv.springtrial.mvc");
+		sessionFactoryBean.setHibernateProperties(hibernateProperties());
+		return sessionFactoryBean;
+	}
+	
+	private Properties hibernateProperties() {
+		Properties prop = new Properties();
+		
+		try (InputStream stream = getClass().getClassLoader().getResourceAsStream("hibernate.properties")) {
+			prop.load(stream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return prop;
 	}
 }
